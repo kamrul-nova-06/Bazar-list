@@ -1,172 +1,215 @@
 <!DOCTYPE html><html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>বাজার লিস্ট রশিদ</title>
-  <link href="https://fonts.googleapis.com/css2?family=Moul&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      background: #f4f4f4;
-      margin: 0;
-      padding: 20px;
-    }
-    #app {
-      max-width: 800px;
-      margin: auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .info-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: space-between;
-    }
-    .info-row div {
-      flex: 1 1 45%;
-    }
-    input, textarea {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-    }
-    .product-form {
-      display: flex;
-      gap: 10px;
-      margin-top: 20px;
-      flex-wrap: wrap;
-    }
-    .product-form input {
-      flex: 1;
-    }
-    .product-form button {
-      padding: 10px 20px;
-      border: none;
-      background: #2c3e50;
-      color: white;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-    .search-section {
-      margin-top: 20px;
-    }
-    .product-list {
-      margin-top: 20px;
-    }
-    .product-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px;
-      border-radius: 10px;
-      margin-bottom: 10px;
-      color: #000;
-    }
-    .product-row .actions button {
-      margin-left: 5px;
-      border: none;
-      padding: 4px 10px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    .note-section textarea {
-      margin-top: 10px;
-    }
-    .total-section {
-      font-size: 18px;
-      font-weight: bold;
-      margin-top: 20px;
-      text-align: right;
-    }
-    .chart-section {
-      margin-top: 30px;
-    }
-    .signature-section {
-      margin-top: 40px;
-      text-align: right;
-    }
-    .signature span {
-      font-size: 24px;
-    }
-    .download-buttons {
-      text-align: center;
-      margin-top: 20px;
-    }
-    .download-buttons button {
-      padding: 10px 15px;
-      margin: 5px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      background: #27ae60;
-      color: white;
-    }
-    @media print {
-      .no-print {
-        display: none;
-      }
-    }
+    :root {
+      --main-bg: #ffffff;
+      --header-color: #2d3748;
+      --text-color: #333;
+      --accent: #4FD1C5;
+      --font: 'Segoe UI', sans-serif;
+    }* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--main-bg);
+  padding: 20px;
+  color: var(--text-color);
+}
+
+.receipt-container {
+  max-width: 800px;
+  margin: auto;
+  background: white;
+  box-shadow: 0 0 20px rgba(0,0,0,0.1);
+  padding: 30px;
+  border-radius: 10px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.header h1 {
+  color: var(--header-color);
+  font-size: 26px;
+}
+
+.receipt-info {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.product-form input, .product-form button {
+  padding: 8px;
+  margin: 5px;
+  font-size: 14px;
+}
+
+.product-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.product-table th, .product-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.product-table th {
+  background-color: var(--accent);
+  color: white;
+}
+
+.product-row {
+  transition: background 0.3s ease;
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.controls button {
+  padding: 10px 20px;
+  border: none;
+  background-color: var(--accent);
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background 0.3s;
+}
+
+.controls button:hover {
+  background-color: #38b2ac;
+}
+
+.signature {
+  font-family: 'Moul', cursive;
+  font-size: 18px;
+  text-align: right;
+  margin-top: 40px;
+}
+
+.hidden-print {
+  display: block;
+}
+
+@media print {
+  .hidden-print {
+    display: none !important;
+  }
+}
+
   </style>
 </head>
 <body>
-  <div id="app">
-    <h1>🛒 বাজার লিস্ট রশিদ</h1>
-    <div class="info-row">
-      <div><label>কাস্টমার নাম: </label><input type="text" id="customerName" placeholder="নাম লিখুন"/></div>
-      <div><label>মোবাইল: </label><input type="text" id="customerPhone" placeholder="০১XXXXXXXXX"/></div>
-      <div><label>রশিদ নম্বর: </label><span id="receiptNumber"></span></div>
-      <div><label>তারিখ: </label><span id="dateToday"></span></div>
-    </div><div class="product-form">
-  <input type="text" id="productName" placeholder="পণ্যের নাম" />
-  <input type="text" id="productQty" placeholder="পরিমাণ" />
-  <input type="number" id="productPrice" placeholder="মূল্য (৳)" />
-  <button onclick="addProduct()">➕ যোগ করুন</button>
-</div>
-
-<div class="search-section">
-  <input type="text" id="searchInput" onkeyup="searchItems()" placeholder="🔍 পণ্য খুঁজুন..."/>
-</div>
-
-<div id="productList" class="product-list"></div>
-
-<div class="note-section">
-  <label>নোট:</label>
-  <textarea id="noteInput" placeholder="অতিরিক্ত তথ্য দিন..."></textarea>
-</div>
-
-<div class="total-section">
-  মোট মূল্য: <span id="totalPrice">৳0</span>
-</div>
-
-<div class="chart-section">
-  <canvas id="priceChart"></canvas>
-</div>
-
-<div class="signature-section">
-  <div class="signature">
-    <span id="signatureName" style="font-family: 'Moul', sans-serif;"></span>
-    <hr/>
-    <small>স্বাক্ষর</small>
-  </div>
-</div>
-
-<div class="download-buttons no-print">
-  <button onclick="downloadPNG()">⬇️ PNG ডাউনলোড</button>
-  <button onclick="downloadPDF()">⬇️ PDF ডাউনলোড</button>
-</div>
-
+  <div class="receipt-container">
+    <div class="header">
+      <h1>🧾 বাজার লিস্ট রশিদ</h1>
+    </div>
+    <div class="receipt-info">
+      <div>রশিদ নম্বর: <span id="receiptNo">#0001</span></div>
+      <div>তারিখ: <span id="date"></span></div>
+    </div>
+    <div class="receipt-info">
+      <div>ক্রেতার নাম: <span id="customerNameView">___</span></div>
+      <div>ফোন: <span id="customerPhoneView">___</span></div>
+    </div>
+    <div class="product-form hidden-print">
+      <input type="text" id="productName" placeholder="পণ্যের নাম" />
+      <input type="text" id="quantity" placeholder="পরিমাণ" />
+      <input type="text" id="price" placeholder="মূল্য (৳)" />
+      <button onclick="addProduct()">যোগ করুন</button>
+    </div>
+    <table class="product-table" id="productTable">
+      <thead>
+        <tr>
+          <th>পণ্যের নাম</th>
+          <th>পরিমাণ</th>
+          <th>মূল্য (৳)</th>
+          <th class="hidden-print">সম্পাদনা</th>
+        </tr>
+      </thead>
+      <tbody id="productBody"></tbody>
+    </table>
+    <div class="controls">
+      <div>মোট: <span id="total">0</span>৳</div>
+      <button onclick="downloadPNG()">PNG ডাউনলোড</button>
+    </div>
+    <div class="signature">
+      <div>স্বাক্ষর:</div>
+      <div id="signatureArea">__________</div>
+    </div>
+    <div style="text-align:center; font-size: 12px; margin-top:30px;">&copy; Kamrul Islam Sohan</div>
   </div>  <script>
-    // Full JavaScript logics next step
-  </script></body>
+    const productBody = document.getElementById("productBody");
+    const receiptNo = document.getElementById("receiptNo");
+    const dateEl = document.getElementById("date");
+    const customerNameView = document.getElementById("customerNameView");
+    const customerPhoneView = document.getElementById("customerPhoneView");
+    const signatureArea = document.getElementById("signatureArea");
+
+    receiptNo.textContent = "#" + Math.floor(Math.random() * 90000 + 10000);
+    dateEl.textContent = new Date().toLocaleDateString();
+
+    function addProduct() {
+      const name = document.getElementById("productName").value || "-";
+      const quantity = document.getElementById("quantity").value || "-";
+      const price = document.getElementById("price").value || "-";
+      const row = document.createElement("tr");
+      row.classList.add("product-row");
+      const bg = getRandomLightColor();
+      row.style.backgroundColor = bg;
+
+      row.innerHTML = `
+        <td>${name}</td>
+        <td>${quantity}</td>
+        <td>${price}</td>
+        <td class="hidden-print">
+          <button onclick="this.closest('tr').remove(); updateTotal();">❌</button>
+        </td>
+      `;
+      productBody.appendChild(row);
+      updateTotal();
+    }
+
+    function updateTotal() {
+      let total = 0;
+      productBody.querySelectorAll("tr").forEach(row => {
+        const price = row.children[2].textContent;
+        if (price !== "-") total += parseFloat(price || 0);
+      });
+      document.getElementById("total").textContent = total.toFixed(2);
+    }
+
+    function getRandomLightColor() {
+      const colors = ["#E3FCEC", "#FCE9E3", "#FFF8E1", "#E0F7FA", "#F3E5F5"];
+      return colors[Math.floor(Math.random() * colors.length)];
+    }
+
+    function downloadPNG() {
+      html2canvas(document.querySelector(".receipt-container"), {
+        backgroundColor: "#fff",
+        scale: 2
+      }).then(canvas => {
+        const link = document.createElement("a");
+        link.download = "bazar-receipt.png";
+        link.href = canvas.toDataURL();
+        link.click();
+      });
+    }
+  </script>  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script></body>
 </html>
